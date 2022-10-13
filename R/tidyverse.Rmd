@@ -1,18 +1,18 @@
-# The tidyverse  {#tidyverse}
+# The tidyverse {#tidyverse}
 
-Up to now we have been manipulating vectors by reordering and subsetting them through indexing. However, once we start more advanced analyses, the preferred unit for data storage is not the vector but the data frame.  In this chapter we learn to work directly with data frames, which greatly facilitate the organization of information. We will be using data frames for the majority of this book. We will focus on a specific data format referred to as _tidy_ and on specific collection of packages that are particularly helpful for working with _tidy_ data referred to as the _tidyverse_.
+Up to now we have been manipulating vectors by reordering and subsetting them through indexing. However, once we start more advanced analyses, the preferred unit for data storage is not the vector but the data frame. In this chapter we learn to work directly with data frames, which greatly facilitate the organization of information. We will be using data frames for the majority of this book. We will focus on a specific data format referred to as *tidy* and on specific collection of packages that are particularly helpful for working with *tidy* data referred to as the *tidyverse*.
 
-We can load all the tidyverse packages at once by installing and loading the __tidyverse__ package:
+We can load all the tidyverse packages at once by installing and loading the **tidyverse** package:
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
 ```
 
-We will learn how to implement the tidyverse approach throughout the book, but before delving into the details, in this chapter we introduce some of the most widely used tidyverse functionality, starting with the __dplyr__ package for manipulating data frames and the __purrr__ package for working with functions. Note that the tidyverse also includes a graphing package, __ggplot2__, which we introduce later in Chapter \@ref(ggplot2) in the Data Visualization part of the book; the __readr__ package discussed in Chapter \@ref(importing-data); and many others. In this chapter, we first introduce the concept of _tidy data_ and then demonstrate how we use the tidyverse to work with data frames in this format. 
+We will learn how to implement the tidyverse approach throughout the book, but before delving into the details, in this chapter we introduce some of the most widely used tidyverse functionality, starting with the **dplyr** package for manipulating data frames and the **purrr** package for working with functions. Note that the tidyverse also includes a graphing package, **ggplot2**, which we introduce later in Chapter \@ref(ggplot2) in the Data Visualization part of the book; the **readr** package discussed in Chapter \@ref(importing-data); and many others. In this chapter, we first introduce the concept of *tidy data* and then demonstrate how we use the tidyverse to work with data frames in this format.
 
 ## Tidy data {#tidy-data}
 
-We say that a data table is in  _tidy_ format if each row represents one observation and columns represent the different variables available for each of these observations. The `murders` dataset is an example of a tidy data frame.
+We say that a data table is in *tidy* format if each row represents one observation and columns represent the different variables available for each of these observations. The `murders` dataset is an example of a tidy data frame.
 
 ```{r, echo=FALSE}
 library(dslabs)
@@ -33,8 +33,7 @@ tidy_data <- gapminder |>
 head(tidy_data, 6)
 ```
 
-This tidy dataset provides fertility rates for two countries across the years. This is a tidy dataset because each row presents one observation with the three variables being country, year, and fertility rate. However, this dataset originally came in another format and was reshaped for the __dslabs__ package. Originally, the data was in the following format:
-
+This tidy dataset provides fertility rates for two countries across the years. This is a tidy dataset because each row presents one observation with the three variables being country, year, and fertility rate. However, this dataset originally came in another format and was reshaped for the **dslabs** package. Originally, the data was in the following format:
 
 ```{r, echo=FALSE, message=FALSE}
 path <- system.file("extdata", package="dslabs")
@@ -45,53 +44,60 @@ select(wide_data, country, `1960`:`1962`) |> as.data.frame()
 
 The same information is provided, but there are two important differences in the format: 1) each row includes several observations and 2) one of the variables, year, is stored in the header. For the tidyverse packages to be optimally used, data need to be reshaped into `tidy` format, which you will learn to do in the Data Wrangling part of the book. Until then, we will use example datasets that are already in tidy format.
 
-Although not immediately obvious, as you go through the book you will start to appreciate the advantages of working in a framework in which functions use tidy formats for both inputs and outputs. You will see how this permits the data analyst to focus on more important aspects of the analysis rather than the format of the data. 
+Although not immediately obvious, as you go through the book you will start to appreciate the advantages of working in a framework in which functions use tidy formats for both inputs and outputs. You will see how this permits the data analyst to focus on more important aspects of the analysis rather than the format of the data.
 
-## Exercises 
-
+## Exercises
 
 1\. Examine the built-in dataset `co2`. Which of the following is true:
 
-a. `co2` is tidy data: it has one year for each row.
-b. `co2` is not tidy: we need at least one column with a character vector.
-c. `co2` is not tidy:  it is a matrix instead of a data frame.
-d. `co2` is not tidy: to be tidy we would have to wrangle it to have three columns (year, month and value), then each co2 observation would have a row.
+```{r}
+co2
+```
 
+a.  `co2` is tidy data: it has one year for each row.
+b.  `co2` is not tidy: we need at least one column with a character vector.
+c.  `co2` is not tidy: it is a matrix instead of a data frame.
+d.  `co2` is not tidy: to be tidy we would have to wrangle it to have three columns (year, month and value), then each co2 observation would have a row. **(Correct)**
 
-2\. Examine the built-in dataset  `ChickWeight`. Which of the following is true:
+2\. Examine the built-in dataset `ChickWeight`. Which of the following is true:
 
-a.  `ChickWeight` is not tidy: each chick has more than one row. 
-b.  `ChickWeight` is tidy: each observation (a weight) is represented by one row. The chick from which this measurement came is one of the variables.
+```{r}
+head(ChickWeight)
+```
+
+a.  `ChickWeight` is not tidy: each chick has more than one row.
+b.  `ChickWeight` is tidy: each observation (a weight) is represented by one row. The chick from which this measurement came is one of the variables. **(Correct)**
 c.  `ChickWeight` is not tidy: we are missing the year column.
 d.  `ChickWeight` is tidy: it is stored in a data frame.
 
-
 3\. Examine the built-in dataset `BOD`. Which of the following is true:
 
-a. `BOD` is not tidy: it only has six rows.
-b. `BOD` is not tidy: the first column is just an index.
-c. `BOD` is tidy: each row is an observation with two values (time and demand)
-d. `BOD` is tidy: all small datasets are tidy by definition.
+```{r}
+BOD
+```
 
+a.  `BOD` is not tidy: it only has six rows.
+b.  `BOD` is not tidy: the first column is just an index.
+c.  `BOD` is tidy: each row is an observation with two values (time and demand) **(Correct)**
+d.  `BOD` is tidy: all small datasets are tidy by definition.
 
-4\. Which of the following built-in datasets is tidy (you can pick more than one):
+4\. Which of the following built-in datasets is tidy (you can pick more than one): *After `data.frame(…)`*
 
-a. `BJsales`
-b. `EuStockMarkets`
-d. `DNase`
-d. `Formaldehyde`
-e. `Orange`
-f. `UCBAdmissions`
-
+a.  `BJsales` **(Correct)**
+b.  `EuStockMarkets`
+c.  `DNase` **(Correct)**
+d.  `Formaldehyde` **(Correct)**
+e.  `Orange` **(Correct)**
+f.  `UCBAdmissions` **(Correct)**
 
 ## Manipulating data frames
 
-The __dplyr__ package from the __tidyverse__ introduces functions that perform some of the most common operations when working with data frames and uses names for these functions that are relatively easy to remember. For instance, to change the data table by adding a new column, we use `mutate`.  To filter the data table to a subset of rows, we use `filter`. Finally, to subset the data by selecting specific columns, we use `select`.
+The **dplyr** package from the **tidyverse** introduces functions that perform some of the most common operations when working with data frames and uses names for these functions that are relatively easy to remember. For instance, to change the data table by adding a new column, we use `mutate`. To filter the data table to a subset of rows, we use `filter`. Finally, to subset the data by selecting specific columns, we use `select`.
 
 ### Adding a column with `mutate`
 
-We want all the necessary information for our analysis to be included in the data table. So the first task is to add the murder rates to our murders data frame.  The function `mutate`  takes the data frame as a first argument and the name and values of the variable as a second argument using the convention `name = values`. So, to add murder rates, we use:
- 
+We want all the necessary information for our analysis to be included in the data table. So the first task is to add the murder rates to our murders data frame. The function `mutate` takes the data frame as a first argument and the name and values of the variable as a second argument using the convention `name = values`. So, to add murder rates, we use:
+
 ```{r, message=FALSE}
 library(dslabs)
 data("murders")
@@ -100,7 +106,7 @@ murders <- mutate(murders, rate = total / population * 100000)
 
 Notice that here we used `total` and `population` inside the function, which are objects that are **not** defined in our workspace. But why don't we get an error?
 
-This is one of __dplyr__'s main features. Functions in this package, such as `mutate`, know to look for variables in the data frame provided in the first argument. In the call to mutate above, `total` will have the values in `murders$total`. This approach makes the code much more readable. 
+This is one of **dplyr**'s main features. Functions in this package, such as `mutate`, know to look for variables in the data frame provided in the first argument. In the call to mutate above, `total` will have the values in `murders$total`. This approach makes the code much more readable.
 
 We can see that the new column is added:
 
@@ -118,21 +124,20 @@ Now suppose that we want to filter the data table to only show the entries for w
 filter(murders, rate <= 0.71)
 ```
 
-
 ### Selecting columns with `select`
 
-Although our data table only has six columns, some data tables include hundreds. If we want to view just a few, we can use the __dplyr__ `select` function. In the code below we select three columns, assign this to a new object and then filter the new object: 
+Although our data table only has six columns, some data tables include hundreds. If we want to view just a few, we can use the **dplyr** `select` function. In the code below we select three columns, assign this to a new object and then filter the new object:
 
 ```{r}
 new_table <- select(murders, state, region, rate)
 filter(new_table, rate <= 0.71)
 ```
 
-In the call to `select`, the first argument `murders` is an object, but `state`, `region`, and `rate` are variable names. 
+In the call to `select`, the first argument `murders` is an object, but `state`, `region`, and `rate` are variable names.
 
-## Exercises 
+## Exercises
 
-1\. Load the __dplyr__ package and the murders dataset.
+1\. Load the **dplyr** package and the murders dataset.
 
 ```{r, eval=FALSE}
 library(dplyr)
@@ -140,8 +145,7 @@ library(dslabs)
 data(murders)
 ```
 
-You can add columns using the __dplyr__ function `mutate`. This function is aware of the column names and inside the function you can call them unquoted:
-
+You can add columns using the **dplyr** function `mutate`. This function is aware of the column names and inside the function you can call them unquoted:
 
 ```{r, eval=FALSE}
 murders <- mutate(murders, population_in_millions = population / 10^6)
@@ -149,13 +153,19 @@ murders <- mutate(murders, population_in_millions = population / 10^6)
 
 We can write `population` rather than `murders$population`. The function `mutate` knows we are grabbing columns from `murders`.
 
-Use the function `mutate` to add a murders column named `rate` with the per 100,000 murder rate as in the example code above. Make sure you redefine `murders` as done in the example code above ( murders <- [your code]) so we can keep using this variable.
+Use the function `mutate` to add a murders column named `rate` with the per 100,000 murder rate as in the example code above. Make sure you redefine `murders` as done in the example code above ( murders \<- [your code]) so we can keep using this variable.
+
+```{r}
+murders <- murders |> mutate(rate = total/population * 100000)
+```
 
 2\. If `rank(x)` gives you the ranks of `x` from lowest to highest, `rank(-x)` gives you the ranks from highest to lowest. Use the function `mutate` to add a column `rank` containing the rank, from highest to lowest murder rate. Make sure you redefine `murders` so we can keep using this variable.
 
+```{r}
+murders <- murders |> mutate(rank = rank(-rate))
+```
 
-
-3\. With __dplyr__, we can use `select` to show only certain columns. For example, with this code we would only show the states and population sizes:
+3\. With **dplyr**, we can use `select` to show only certain columns. For example, with this code we would only show the states and population sizes:
 
 ```{r, eval=FALSE}
 select(murders, state, population) |> head()
@@ -163,8 +173,11 @@ select(murders, state, population) |> head()
 
 Use `select` to show the state names and abbreviations in `murders`. Do not redefine `murders`, just show the results.
 
+```{r}
+murders %>% select(state, abb)
+```
 
-4\. The __dplyr__ function `filter` is used to choose specific rows of the data frame to keep. Unlike `select` which is for columns, `filter` is for rows. For example, you can show just the New York row like this:
+4\. The **dplyr** function `filter` is used to choose specific rows of the data frame to keep. Unlike `select` which is for columns, `filter` is for rows. For example, you can show just the New York row like this:
 
 ```{r, eval=FALSE}
 filter(murders, state == "New York")
@@ -174,7 +187,10 @@ You can use other logical vectors to filter rows.
 
 Use `filter` to show the top 5 states with the highest murder rates. After we add murder rate and rank, do not change the murders dataset, just show the result. Remember that you can filter based on the `rank` column.
 
- 
+```{r}
+murders %>% filter(rank <= 5)
+```
+
 5\. We can remove rows using the `!=` operator. For example, to remove Florida, we would do this:
 
 ```{r, eval=FALSE}
@@ -183,15 +199,23 @@ no_florida <- filter(murders, state != "Florida")
 
 Create a new data frame called `no_south` that removes states from the South region. How many states are in this category? You can use the function `nrow` for this.
 
+```{r}
+no_south <- filter(murders, region != "South")
+nrow(no_south)
+```
 
-6\. We can also use `%in%` to filter with __dplyr__. You can therefore see the data from New York and Texas like this:
+6\. We can also use `%in%` to filter with **dplyr**. You can therefore see the data from New York and Texas like this:
 
 ```{r, eval=FALSE}
 filter(murders, state %in% c("New York", "Texas"))
 ```
 
-Create a new data frame called `murders_nw` with only the states from the Northeast and the West.  How many states are in this category? 
+Create a new data frame called `murders_nw` with only the states from the Northeast and the West. How many states are in this category?
 
+```{r}
+murders_nw <- filter(murders, region %in% c("Northeast", "West"))
+nrow(murders_nw)
+```
 
 7\. Suppose you want to live in the Northeast or West **and** want the murder rate to be less than 1. We want to see the data for the states satisfying these options. Note that you can use logical operators with `filter`. Here is an example in which we filter to keep only small states in the Northeast region.
 
@@ -199,18 +223,22 @@ Create a new data frame called `murders_nw` with only the states from the Northe
 filter(murders, population < 5000000 & region == "Northeast")
 ```
 
-Make sure `murders` has been defined with `rate` and `rank` and still has all states. Create a table called `my_states` that contains rows for states satisfying both the conditions: it is in the Northeast or West and the murder rate is less than 1.  Use `select` to show only the state name, the rate, and the rank.
+Make sure `murders` has been defined with `rate` and `rank` and still has all states. Create a table called `my_states` that contains rows for states satisfying both the conditions: it is in the Northeast or West and the murder rate is less than 1. Use `select` to show only the state name, the rate, and the rank.
+
+```{r}
+my_states <- filter(murders_nw, rate < 1) 
+my_states %>% select(state, rate, rank)
+```
 
 ## The pipe: `|>` or `%>%`
 
-In R we can perform a series of operations, for example `select` and then `filter`, by sending the results of one function to another using what is called the _pipe operator_: `|>`. Since R version 4.1.0, you can also use `|>`. Some details are included below. 
+In R we can perform a series of operations, for example `select` and then `filter`, by sending the results of one function to another using what is called the *pipe operator*: `|>`. Since R version 4.1.0, you can also use `|>`. Some details are included below.
 
-We wrote code above to show three variables (state, region, rate) for states that have murder rates below 0.71. To do this, we defined the intermediate object `new_table`. In __dplyr__ we can write code that looks more like a description of what we want to do without intermediate objects: 
+We wrote code above to show three variables (state, region, rate) for states that have murder rates below 0.71. To do this, we defined the intermediate object `new_table`. In **dplyr** we can write code that looks more like a description of what we want to do without intermediate objects:
 
 $$ \mbox{original data }
 \rightarrow \mbox{ select }
 \rightarrow \mbox{ filter } $$
-
 
 For such an operation, we can use the pipe `|>`. The code looks like this:
 
@@ -218,18 +246,20 @@ For such an operation, we can use the pipe `|>`. The code looks like this:
 murders |> select(state, region, rate) |> filter(rate <= 0.71)
 ```
 
-This line of code is equivalent to the two lines of code above. What is going on here? 
+This line of code is equivalent to the two lines of code above. What is going on here?
 
-In general, the pipe _sends_ the result of the left side of the pipe to be the first argument of the function on the right side of the pipe. Here is a very simple example:
+In general, the pipe *sends* the result of the left side of the pipe to be the first argument of the function on the right side of the pipe. Here is a very simple example:
 
 ```{r}
 16 |> sqrt()
 ```
+
 We can continue to pipe values along:
 
 ```{r}
 16 |> sqrt() |> log2()
 ```
+
 The above statement is equivalent to `log2(sqrt(16))`.
 
 Remember that the pipe sends values to the first argument, so we can define other arguments as if the first argument is already defined:
@@ -238,14 +268,15 @@ Remember that the pipe sends values to the first argument, so we can define othe
 16 |> sqrt() |> log(base = 2)
 ```
 
-Therefore, when using the pipe with data frames and __dplyr__, we no longer need to specify the required first argument since the __dplyr__ functions we have described all take the data as the first argument. In the code we wrote:
+Therefore, when using the pipe with data frames and **dplyr**, we no longer need to specify the required first argument since the **dplyr** functions we have described all take the data as the first argument. In the code we wrote:
 
 ```{r, eval=FALSE}
 murders |> select(state, region, rate) |> filter(rate <= 0.71)
 ```
+
 `murders` is the first argument of the `select` function, and the new data frame (formerly `new_table`) is the first argument of the `filter` function.
 
-Note that the pipe works well with functions where the first argument is the input data. Functions in __tidyverse__ packages like __dplyr__ have this format and can be used easily with the pipe.
+Note that the pipe works well with functions where the first argument is the input data. Functions in **tidyverse** packages like **dplyr** have this format and can be used easily with the pipe.
 
 ## Exercises
 
@@ -257,6 +288,7 @@ murders <- mutate(murders, rate =  total / population * 100000,
 ```
 
 In the solution to the previous exercise, we did the following:
+
 ```{r, eval=FALSE}
 my_states <- filter(murders, region %in% c("Northeast", "West") & 
                       rate < 1)
@@ -272,12 +304,16 @@ mutate(murders, rate =  total / population * 100000,
   select(state, rate, rank)
 ```
 
-Notice that `select` no longer has a data frame as the first argument. The first argument is assumed to be the result of the operation conducted right before the  `|>`.
-    
+Notice that `select` no longer has a data frame as the first argument. The first argument is assumed to be the result of the operation conducted right before the `|>`.
+
 Repeat the previous exercise, but now instead of creating a new object, show the result and only include the state, rate, and rank columns. Use a pipe `|>` to do this in just one line.
 
+```{r}
+murders_nw |> filter(rate < 1) |> select(state, rate, rank)
+```
+
 2\. Reset `murders` to the original table by using `data(murders)`. Use a pipe to create a new data frame called `my_states` that considers only states in the Northeast or West which have a murder rate lower than 1, and contains only the state, rate and rank columns. The pipe should also have four components separated by three `|>`. The code should look something like this:
-    
+
 ```{r, eval=FALSE}
 my_states <- murders |>
   mutate SOMETHING |> 
@@ -285,9 +321,19 @@ my_states <- murders |>
   select SOMETHING
 ```
 
+```{r}
+data(murders)
+my_states <- murders |> 
+    mutate(rate = total/population * 100000, 
+           rank = rank(-rate)) |>
+    filter(rate < 1) |>
+    select(state, rate, rank)
+head(my_states)
+```
+
 ## Summarizing data
 
-An important part of exploratory data analysis is summarizing data. The average and standard deviation are two examples of widely used summary statistics. More informative summaries can often be achieved by first splitting data into groups. In this section, we cover two new __dplyr__ verbs that make these computations easier: `summarize` and `group_by`. We learn to access resulting values using the `pull` function.  
+An important part of exploratory data analysis is summarizing data. The average and standard deviation are two examples of widely used summary statistics. More informative summaries can often be achieved by first splitting data into groups. In this section, we cover two new **dplyr** verbs that make these computations easier: `summarize` and `group_by`. We learn to access resulting values using the `pull` function.
 
 ```{r, message=FALSE, echo=FALSE}
 library(tidyverse)
@@ -295,7 +341,7 @@ library(tidyverse)
 
 ### `summarize` {#summarize}
 
-The `summarize` function in __dplyr__ provides a way to compute summary statistics with intuitive and readable code. We start with a simple example based on heights. The `heights` dataset includes heights and sex reported by students in an in-class survey. 
+The `summarize` function in **dplyr** provides a way to compute summary statistics with intuitive and readable code. We start with a simple example based on heights. The `heights` dataset includes heights and sex reported by students in an in-class survey.
 
 ```{r}
 library(dplyr)
@@ -321,9 +367,9 @@ s$average
 s$standard_deviation
 ```
 
-As with most other __dplyr__ functions, `summarize` is aware of the variable names and we can use them directly. So when inside the call to the `summarize` function we write `mean(height)`, the function is accessing the column with the name "height" and then computing the average of the resulting numeric vector. We can compute any other summary that operates on vectors and returns a single value. 
+As with most other **dplyr** functions, `summarize` is aware of the variable names and we can use them directly. So when inside the call to the `summarize` function we write `mean(height)`, the function is accessing the column with the name "height" and then computing the average of the resulting numeric vector. We can compute any other summary that operates on vectors and returns a single value.
 
-For another example of how we can use the `summarize` function, let's compute the average murder rate for the United States. Remember our data table includes total murders and population size for each state and we have already used __dplyr__ to add a murder rate column:
+For another example of how we can use the `summarize` function, let's compute the average murder rate for the United States. Remember our data table includes total murders and population size for each state and we have already used **dplyr** to add a murder rate column:
 
 ```{r}
 murders <- murders |> mutate(rate = total/population*100000)
@@ -345,11 +391,9 @@ us_murder_rate
 
 This computation counts larger states proportionally to their size which results in a larger value.
 
-
 ### Multiple summaries
 
 Suppose we want three summaries from the same variable such as the median, minimum, and maximum heights. We can use `summarize` like this:
- 
 
 But we can obtain these three values with just one line using the `quantile` function: `quantile(x, c(0.5, 0, 1))` returns the median (50th percentile), the min (0th percentile), and max (100th percentile) of the vector `x`. We can use it with `summarize` like this:
 
@@ -375,7 +419,7 @@ In the next section we learn how useful this approach can be when summarizing by
 
 ### Group then summarize with `group_by` {#group-by}
 
-A common operation in data exploration is to first split data into groups and then compute summaries for each group. For example, we may want to compute the average and standard deviation for men's and women's heights separately. The `group_by` function helps us do this. 
+A common operation in data exploration is to first split data into groups and then compute summaries for each group. For example, we may want to compute the average and standard deviation for men's and women's heights separately. The `group_by` function helps us do this.
 
 If we type this:
 
@@ -383,7 +427,7 @@ If we type this:
 heights |> group_by(sex)
 ```
 
-The result does not look very different from `heights`, except we see `Groups: sex [2]` when we print the object. Although not immediately obvious from its appearance, this is now a special data frame called a _grouped data frame_, and __dplyr__ functions, in particular `summarize`, will behave differently when acting on this object. Conceptually, you can think of this table as many tables, with the same columns but not necessarily the same number of rows, stacked together in one object. When we summarize the data after grouping, this is what happens:
+The result does not look very different from `heights`, except we see `Groups: sex [2]` when we print the object. Although not immediately obvious from its appearance, this is now a special data frame called a *grouped data frame*, and **dplyr** functions, in particular `summarize`, will behave differently when acting on this object. Conceptually, you can think of this table as many tables, with the same columns but not necessarily the same number of rows, stacked together in one object. When we summarize the data after grouping, this is what happens:
 
 ```{r}
 heights |> 
@@ -395,13 +439,11 @@ The `summarize` function applies the summarization to each group separately.
 
 For another example, let's compute the median, minimum, and maximum murder rate in the four regions of the country using the `median_min_max` defined above:
 
-
 ```{r}
 murders |> 
   group_by(region) |>
   summarize(median_min_max(rate))
 ```
-
 
 ## `pull`
 
@@ -411,7 +453,7 @@ The `us_murder_rate` object defined above represents just one number. Yet we are
 class(us_murder_rate)
 ```
 
-since, as most __dplyr__ functions, `summarize` always returns a data frame.
+since, as most **dplyr** functions, `summarize` always returns a data frame.
 
 This might be problematic if we want to use this result with functions that require a numeric value. Here we show a useful trick for accessing values stored in data when using pipes: when a data object is piped that object and its columns can be accessed using the `pull` function. To understand what we mean take a look at this line of code:
 
@@ -419,7 +461,7 @@ This might be problematic if we want to use this result with functions that requ
 us_murder_rate |> pull(rate)
 ```
 
-This returns the value in the `rate` column of `us_murder_rate` making it equivalent to `us_murder_rate$rate`. 
+This returns the value in the `rate` column of `us_murder_rate` making it equivalent to `us_murder_rate$rate`.
 
 To get a number from the original data table with one line of code we can type:
 
@@ -439,7 +481,7 @@ class(us_murder_rate)
 
 ## Sorting data frames
 
-When examining a dataset, it is often convenient to sort the table by the different columns. We know about the `order` and `sort` function, but for ordering entire tables, the __dplyr__ function `arrange` is useful. For example, here we order the states by population size:
+When examining a dataset, it is often convenient to sort the table by the different columns. We know about the `order` and `sort` function, but for ordering entire tables, the **dplyr** function `arrange` is useful. For example, here we order the states by population size:
 
 ```{r}
 murders |>
@@ -455,14 +497,14 @@ murders |>
   head()
 ```
 
-Note that the default behavior is to order in ascending order. In __dplyr__, the function `desc` transforms a vector so that it is in descending order. To sort the table in descending order, we can type:
+Note that the default behavior is to order in ascending order. In **dplyr**, the function `desc` transforms a vector so that it is in descending order. To sort the table in descending order, we can type:
 
 ```{r, eval=FALSE}
 murders |> 
   arrange(desc(rate)) 
 ```
 
-### Nested sorting 
+### Nested sorting
 
 If we are ordering by a column with ties, we can use a second column to break the tie. Similarly, a third column can be used to break ties between first and second and so on. Here we order by `region`, then within region we order by murder rate:
 
@@ -472,8 +514,7 @@ murders |>
   head()
 ```
 
-
-### The top $n$ 
+### The top $n$
 
 In the code above, we have used the function `head` to avoid having the page fill up with the entire dataset. If we want to see a larger proportion, we can use the `top_n` function. This function takes a data frame as it's first argument, the number of rows to show in the second, and the variable to filter by in the third. Here is an example of how to see the top 5 rows:
 
@@ -481,20 +522,18 @@ In the code above, we have used the function `head` to avoid having the page fil
 murders |> top_n(5, rate)
 ```
 
-Note that rows are not sorted by `rate`, only filtered. If we want to sort, we need to use `arrange`.
-Note that if the third argument is left blank, `top_n` filters by the last column.
+Note that rows are not sorted by `rate`, only filtered. If we want to sort, we need to use `arrange`. Note that if the third argument is left blank, `top_n` filters by the last column.
 
+## Exercises
 
-## Exercises 
-
-For these exercises, we will be using the data from the survey collected by the United States National Center for Health Statistics (NCHS). This center has conducted a series of health and nutrition surveys since the 1960’s. Starting in 1999, about 5,000 individuals of all ages have been interviewed every year and they complete the health examination component of the survey. Part of the data is made available via the __NHANES__ package. Once you install the __NHANES__ package, you can load the data like this:
+For these exercises, we will be using the data from the survey collected by the United States National Center for Health Statistics (NCHS). This center has conducted a series of health and nutrition surveys since the 1960's. Starting in 1999, about 5,000 individuals of all ages have been interviewed every year and they complete the health examination component of the survey. Part of the data is made available via the **NHANES** package. Once you install the **NHANES** package, you can load the data like this:
 
 ```{r}
 library(NHANES)
 data(NHANES)
 ```
 
-The __NHANES__ data has many missing values. The `mean` and `sd` functions in R will return `NA` if any of the entries of the input vector is an `NA`. Here is an example:
+The **NHANES** data has many missing values. The `mean` and `sd` functions in R will return `NA` if any of the entries of the input vector is an `NA`. Here is an example:
 
 ```{r}
 library(dslabs)
@@ -516,26 +555,71 @@ Let's now explore the NHANES data.
 
 Hint: Use `filter` and `summarize` and use the `na.rm = TRUE` argument when computing the average and standard deviation. You can also filter the NA values using `filter`.
 
+```{r}
+ref <- NHANES |> 
+    filter(Gender ==  "female" & AgeDecade == " 20-29") |>
+    summarize(mean = mean(BPSysAve, na.rm = TRUE), 
+              sd = sd(BPSysAve, na.rm=TRUE))
+head(ref)
+```
 
 2\. Using a pipe, assign the average to a numeric variable `ref_avg`. Hint: Use the code similar to above and then `pull`.
 
+```{r}
+ref_avg <- ref |> pull(mean)
+```
 
 3\. Now report the min and max values for the same group.
 
+```{r}
+NHANES |> 
+    filter(Gender ==  "female" & AgeDecade == " 20-29") |>
+    summarize(min = min(BPSysAve, na.rm = TRUE), 
+              max = max(BPSysAve, na.rm=TRUE))
+```
 
 4\. Compute the average and standard deviation for females, but for each age group separately rather than a selected decade as in question 1. Note that the age groups are defined by `AgeDecade`. Hint: rather than filtering by age and gender, filter by `Gender` and then use `group_by`.
 
-5\. Repeat exercise 4 for males. 
+```{r}
+NHANES |> 
+    filter(Gender ==  "female") |>
+    group_by(AgeDecade) |>
+    summarize(mean = mean(BPSysAve, na.rm = TRUE), 
+              sd = sd(BPSysAve, na.rm=TRUE))
+```
+
+5\. Repeat exercise 4 for males.
+
+```{r}
+NHANES |> 
+    filter(Gender ==  "male") |>
+    group_by(AgeDecade) |>
+    summarize(mean = mean(BPSysAve, na.rm = TRUE), 
+              sd = sd(BPSysAve, na.rm=TRUE))
+```
 
 6\. We can actually combine both summaries for exercises 4 and 5 into one line of code. This is because `group_by` permits us to group by more than one variable. Obtain one big summary table using `group_by(AgeDecade, Gender)`.
 
+```{r}
+NHANES |> 
+    group_by(AgeDecade, Gender) |>
+    summarize(mean = mean(BPSysAve, na.rm = TRUE), 
+              sd = sd(BPSysAve, na.rm=TRUE))
+```
+
 7\. For males between the ages of 40-49, compare systolic blood pressure across race as reported in the `Race1` variable. Order the resulting table from lowest to highest average systolic blood pressure.
 
-
+```{r}
+NHANES |>
+    filter(Gender == "male" & AgeDecade ==" 40-49") |>
+    group_by(Race1) |>
+    summarize(mean = mean(BPSysAve, na.rm = TRUE), 
+              sd = sd(BPSysAve, na.rm=TRUE))
+```
 
 ## Tibbles
 
-Tidy data must be stored in data frames. We introduced the data frame in Section \@ref(data-frames) and have been using the `murders` data frame throughout the book. In Section \@ref(group-by) we introduced the `group_by` function, which permits stratifying data before computing summary statistics. But where is the group information stored in the data frame? 
+Tidy data must be stored in data frames. We introduced the data frame in Section \@ref(data-frames) and have been using the `murders` data frame throughout the book. In Section \@ref(group-by) we introduced the `group_by` function, which permits stratifying data before computing summary statistics. But where is the group information stored in the data frame?
 
 ```{r}
 murders |> group_by(region)
@@ -547,12 +631,11 @@ Notice that there are no columns with this information. But, if you look closely
 murders |> group_by(region) |> class()
 ```
 
-The `tbl`, pronounced tibble, is a special kind of data frame. The functions `group_by` and `summarize` always return this type of data frame. The `group_by` function returns a special kind of `tbl`, the `grouped_df`. We will say more about these later. For consistency, the __dplyr__ manipulation verbs (`select`, `filter`, `mutate`, and `arrange`) preserve the class of the input: if they receive a regular data frame they return a regular data frame, while if they receive a tibble they return a tibble. But tibbles are the preferred format in the tidyverse and as a result tidyverse functions that produce a data frame from scratch return a tibble. For example, in Chapter \@ref(importing-data) we will see that tidyverse functions used to import data create tibbles.
+The `tbl`, pronounced tibble, is a special kind of data frame. The functions `group_by` and `summarize` always return this type of data frame. The `group_by` function returns a special kind of `tbl`, the `grouped_df`. We will say more about these later. For consistency, the **dplyr** manipulation verbs (`select`, `filter`, `mutate`, and `arrange`) preserve the class of the input: if they receive a regular data frame they return a regular data frame, while if they receive a tibble they return a tibble. But tibbles are the preferred format in the tidyverse and as a result tidyverse functions that produce a data frame from scratch return a tibble. For example, in Chapter \@ref(importing-data) we will see that tidyverse functions used to import data create tibbles.
 
 Tibbles are very similar to data frames. In fact, you can think of them as a modern version of data frames. Nonetheless there are three important differences which we describe next.
 
-
-### Tibbles display better 
+### Tibbles display better
 
 The print method for tibbles is more readable than that of a data frame. To see this, compare the outputs of typing `murders` and the output of murders if we convert it to a tibble. We can do this using `as_tibble(murders)`. If using RStudio, output for a tibble adjusts to your window size. To see this, change the width of your R console and notice how more/less columns are shown.
 
@@ -570,7 +653,7 @@ is not a data frame. With tibbles this does not happen:
 class(as_tibble(murders)[,4])
 ```
 
-This is useful in the tidyverse since functions require data frames as input. 
+This is useful in the tidyverse since functions require data frames as input.
 
 With tibbles, if you want to access the vector that defines a column, and not get back a data frame, you need to use the accessor `$`:
 
@@ -590,7 +673,6 @@ returns a `NULL` with no warning, which can make it harder to debug. In contrast
 as_tibble(murders)$Population
 ```
 
-
 ### Tibbles can have complex entries
 
 While data frame columns need to be vectors of numbers, strings, or logical values, tibbles can have more complex objects, such as lists or functions. Also, we can create tibbles with functions:
@@ -599,14 +681,13 @@ While data frame columns need to be vectors of numbers, strings, or logical valu
 tibble(id = c(1, 2, 3), func = c(mean, median, sd))
 ```
 
-
 ### Tibbles can be grouped
 
-The function `group_by` returns a special kind of tibble: a grouped tibble. This class stores information that lets you know which rows are in which groups. The tidyverse functions, in particular the `summarize` function, are aware of the group information. 
+The function `group_by` returns a special kind of tibble: a grouped tibble. This class stores information that lets you know which rows are in which groups. The tidyverse functions, in particular the `summarize` function, are aware of the group information.
 
 ### Create a tibble using `tibble` instead of `data.frame`
 
-It is sometimes useful for us to create our own data frames. To create a data frame in the tibble format, you can do this by using the `tibble` function.   
+It is sometimes useful for us to create our own data frames. To create a data frame in the tibble format, you can do this by using the `tibble` function.
 
 ```{r}
 grades <- tibble(names = c("John", "Juan", "Jean", "Yao"), 
@@ -614,8 +695,7 @@ grades <- tibble(names = c("John", "Juan", "Jean", "Yao"),
                      exam_2 = c(90, 85, 85, 90))
 ```
 
-Note that base R (without packages loaded) has a function with a very similar name, `data.frame`, that can be used to create a regular data frame rather than a tibble.  
-
+Note that base R (without packages loaded) has a function with a very similar name, `data.frame`, that can be used to create a regular data frame rather than a tibble.
 
 ```{r}
 grades <- data.frame(names = c("John", "Juan", "Jean", "Yao"), 
@@ -623,14 +703,11 @@ grades <- data.frame(names = c("John", "Juan", "Jean", "Yao"),
                      exam_2 = c(90, 85, 85, 90))
 ```
 
-
-To convert a regular data frame to a tibble, you can use the  `as_tibble` function. 
+To convert a regular data frame to a tibble, you can use the `as_tibble` function.
 
 ```{r}
 as_tibble(grades) |> class()
 ```
-
-
 
 ## The placeholder
 
@@ -642,11 +719,9 @@ log(8, base = 2)
 2 %>% log(8, base = .)
 ```
 
-
-## The __purrr__ package
+## The **purrr** package
 
 In Section \@ref(vectorization) we learned about the `sapply` function, which permitted us to apply the same function to each element of a vector. We constructed a function and used `sapply` to compute the sum of the first `n` integers for several values of `n` like this:
-
 
 ```{r}
 compute_s_n <- function(n){
@@ -657,9 +732,9 @@ n <- 1:25
 s_n <- sapply(n, compute_s_n)
 ```
 
-This type of operation, applying the same function or procedure to elements of an object, is quite common in data analysis. The __purrr__ package includes functions similar to `sapply` but that better interact with other tidyverse functions. The main advantage is that we can better control the output type of functions. In contrast, `sapply` can return several different object types; for example, we might expect a numeric result from a line of code, but `sapply` might convert our result to character under some circumstances. __purrr__ functions will never do this: they will return objects of a specified type or return an error if this is not possible. 
+This type of operation, applying the same function or procedure to elements of an object, is quite common in data analysis. The **purrr** package includes functions similar to `sapply` but that better interact with other tidyverse functions. The main advantage is that we can better control the output type of functions. In contrast, `sapply` can return several different object types; for example, we might expect a numeric result from a line of code, but `sapply` might convert our result to character under some circumstances. **purrr** functions will never do this: they will return objects of a specified type or return an error if this is not possible.
 
-The first __purrr__ function we will learn is `map`, which works very similar to `sapply` but always, without exception, returns a list:
+The first **purrr** function we will learn is `map`, which works very similar to `sapply` but always, without exception, returns a list:
 
 ```{r}
 library(purrr)
@@ -667,7 +742,7 @@ s_n <- map(n, compute_s_n)
 class(s_n)
 ```
 
-If we want a numeric vector, we can instead use `map_dbl` which always returns a vector of numeric values. 
+If we want a numeric vector, we can instead use `map_dbl` which always returns a vector of numeric values.
 
 ```{r}
 s_n <- map_dbl(n, compute_s_n)
@@ -676,7 +751,7 @@ class(s_n)
 
 This produces the same results as the `sapply` call shown above.
 
-A particularly useful __purrr__ function for interacting with the rest of the tidyverse is `map_df`, which always returns a tibble data frame. However, the function being called needs to return a vector or a list with names. For this reason, the following code would result in a `Argument 1 must have names` error:
+A particularly useful **purrr** function for interacting with the rest of the tidyverse is `map_df`, which always returns a tibble data frame. However, the function being called needs to return a vector or a list with names. For this reason, the following code would result in a `Argument 1 must have names` error:
 
 ```{r, eval=FALSE}
 s_n <- map_df(n, compute_s_n)
@@ -692,11 +767,11 @@ compute_s_n <- function(n){
 s_n <- map_df(n, compute_s_n)
 ```
 
-The __purrr__ package provides much more functionality not covered here. For more details you can consult [this online resource](https://jennybc.github.io/purrr-tutorial/).
+The **purrr** package provides much more functionality not covered here. For more details you can consult [this online resource](https://jennybc.github.io/purrr-tutorial/).
 
 ## Tidyverse conditionals
 
-A typical data analysis will often involve one or more conditional operations. In Section \@ref(conditionals) we described the `ifelse` function, which we will use extensively in this book. In this section we present two __dplyr__ functions that provide further functionality for performing conditional operations.
+A typical data analysis will often involve one or more conditional operations. In Section \@ref(conditionals) we described the `ifelse` function, which we will use extensively in this book. In this section we present two **dplyr** functions that provide further functionality for performing conditional operations.
 
 ### `case_when`
 
@@ -709,7 +784,7 @@ case_when(x < 0 ~ "Negative",
           TRUE  ~ "Zero")
 ```
 
-A common use for this function is to define categorical variables based on existing variables. For example, suppose we want to compare the murder rates in four groups of states: _New England_, _West Coast_, _South_,  and _other_. For each state, we need to ask if it is in New England, if it is not we ask if it is in the West Coast, if not we ask if it is in the South, and if not we assign _other_. Here is how we use `case_when` to do this:
+A common use for this function is to define categorical variables based on existing variables. For example, suppose we want to compare the murder rates in four groups of states: *New England*, *West Coast*, *South*, and *other*. For each state, we need to ask if it is in New England, if it is not we ask if it is in the West Coast, if not we ask if it is in the South, and if not we assign *other*. Here is how we use `case_when` to do this:
 
 ```{r}
 murders |> 
@@ -730,31 +805,55 @@ A common operation in data analysis is to determine if a value falls inside an i
 x >= a & x <= b
 ```
 
-However, this can become cumbersome, especially within the tidyverse approach. The  `between` function performs the same operation.
+However, this can become cumbersome, especially within the tidyverse approach. The `between` function performs the same operation.
 
 ```{r, eval = FALSE}
 between(x, a, b)
 ```
 
-## Exercises 
+## Exercises
 
 1\. Load the `murders` dataset. Which of the following is true?
 
-a. `murders` is in tidy format and is stored in a tibble.
-b. `murders` is in tidy format and is stored in a data frame.
-c. `murders` is not in tidy format and is stored in a tibble.
-d. `murders` is not in tidy format and is stored in a data frame.
-    
+a.  `murders` is in tidy format and is stored in a tibble.
+b.  `murders` is in tidy format and is stored in a data frame. **(Correct)**
+c.  `murders` is not in tidy format and is stored in a tibble.
+d.  `murders` is not in tidy format and is stored in a data frame.
+
 2\. Use `as_tibble` to convert the `murders` data table into a tibble and save it in an object called `murders_tibble`.
-    
+
+```{r}
+murders_tibble <- as_tibble(murders)
+```
+
 3\. Use the `group_by` function to convert `murders` into a tibble that is grouped by region.
 
+```{r}
+murders |> group_by(region)
+```
+
 4\. Write tidyverse code that is equivalent to this code:
-    
+
 ```{r, eval=FALSE}
 exp(mean(log(murders$population)))
 ```
 
 Write it using the pipe so that each function is called without arguments. Use the dot operator to access the population. Hint: The code should start with `murders |>`.
-    
-5\. Use the `map_df` to create a data frame with three columns named `n`, `s_n`, and `s_n_2`. The first column should contain the numbers 1 through 100. The second and third columns should each contain the sum of 1 through $n$ with $n$ the row number.  
+
+```{r}
+murders |> pull(population) |> log() |> mean() |> exp()
+```
+
+5\. Use the `map_df` to create a data frame with three columns named `n`, `s_n`, and `s_n_2`. The first column should contain the numbers 1 through 100. The second and third columns should each contain the sum of 1 through $n$ with $n$ the row number.
+
+```{r}
+compute_s_n <- function(n){
+  x <- 1:n
+  tibble(n = n,
+         s_n = sum(x),
+         s_n_2 = sum(x^2))
+}
+
+df <- map_df(1:100, compute_s_n)
+df
+```
